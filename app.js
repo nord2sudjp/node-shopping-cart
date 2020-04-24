@@ -14,9 +14,11 @@ var usersRouter = require("./routes/users");
 var app = express();
 
 // view engine setup
-app.engine(".hbs", expresshbs({ defaultLayout: "layout", extname: ".hbs" }));
-// app.set("views", path.join(__dirname, "views"));
-app.set("view engine", ".hbs");
+// app.engine(".hbs", expresshbs({ defaultLayout: "layout", extname: ".hbs" }));
+// こちらだと正しく動かない, #eachで this.titleについて値が取れない
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "hbs");
+require("./utils/hbsregister");
 
 app.use(logger("dev"));
 app.use(express.json());
