@@ -1,5 +1,9 @@
 var createError = require("http-errors");
 var express = require("express");
+var expresssession = require("express-session");
+
+var passport = require("passport");
+var flash = require("connect-flash");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
@@ -24,6 +28,15 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(
+  expresssession({
+    secret: "secretkey",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(flash());
+
 app.use(express.static(path.join(__dirname, "public")));
 
 // Database
