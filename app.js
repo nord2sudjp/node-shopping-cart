@@ -1,8 +1,9 @@
 var createError = require("http-errors");
 var express = require("express");
 var expresssession = require("express-session");
-
 var passport = require("passport");
+var LocalStrategy = require("passport-local").Strategy;
+
 var flash = require("connect-flash");
 var path = require("path");
 var cookieParser = require("cookie-parser");
@@ -22,7 +23,7 @@ var app = express();
 // こちらだと正しく動かない, #eachで this.titleについて値が取れない
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
-require("./utils/hbsregister");
+require("./config/hbsregister");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -37,7 +38,12 @@ app.use(
 );
 app.use(flash());
 
+// express-sessionとpassportの関係性
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use(passport.initialize());
+app.use(passport.session());
+require("./config/passport");
 
 // Database
 require("./db/mongoose");
