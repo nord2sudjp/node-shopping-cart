@@ -3,6 +3,9 @@ var User = require("../models/user");
 var LocalStrategy = require("passport-local").Strategy;
 const { body, check, validationResult } = require("express-validator");
 
+var csrf = require("csurf");
+
+var csrfProtection = csrf();
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });

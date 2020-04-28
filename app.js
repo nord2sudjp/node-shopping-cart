@@ -14,7 +14,7 @@ var expresshbs = require("express-handlebars");
 var mongoose = require("mongoose");
 
 var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
+var userRouter = require("./routes/user");
 
 var app = express();
 
@@ -49,8 +49,14 @@ require("./config/passport");
 require("./db/mongoose");
 
 // Routing
+app.use((req, res, next) => {
+  // always run whichever route.
+  // this is necesary to manage view.
+  res.locals.login = req.isAuthenticated();
+  next();
+});
+app.use("/user", userRouter); // この順番大事。まずはパス付→index→ワイルドカード?
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
