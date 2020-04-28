@@ -42,8 +42,10 @@ router.get("/user/signup", async (req, res, next) => {
 
 router.post(
   "/user/signup",
-  [check("email").notEmpty().withMessage("Email field is required")],
-  [check("password").notEmpty().withMessage("Password field is required")],
+  [
+    check("email").notEmpty().withMessage("Email field is required"),
+    check("password").notEmpty().withMessage("Password field is required"),
+  ],
 
   /*
   passport.authenticate("local.signup", {
@@ -80,5 +82,34 @@ router.post(
 router.get("/user/profile", (req, res, next) => {
   res.render("user/profile");
 });
+
+router.get("/user/signin", (req, res, next) => {
+  var messages = req.flash("error");
+  res.render("user/signin", { csrfToken: req.csrfToken(), messages });
+});
+
+router.post(
+  "/user/signin",
+  [
+    check("email").notEmpty().withMessage("Email field is required"),
+    check("password").notEmpty().withMessage("Password field is required"),
+  ],
+  async (req, res) => {
+    const valresult = validationResult(req);
+
+    if (!valresult.isEmpty()) {
+      errorMessages = valresult.errors.map((el) => el.msg);
+      req.flash("error", errorMessages);
+      return res.redirect("/user/signin");
+    }
+    console.log("/user/signin: main process.");
+
+    await passport.authenticate("local.signin", {
+      successRedirect: "/user/profile",
+      failureRedirect: "/user/signin",
+      failureFlash: true,
+    })(req, res);
+  }
+);
 
 module.exports = router;

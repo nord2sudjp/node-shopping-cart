@@ -11,8 +11,18 @@ userSchema.methods.encryptPassword = (password) => {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(5), null);
 };
 
-userSchema.methods.validPassword = (password) => {
-  return bcrypt.compareSync(password, this.password);
+userSchema.methods.validPassword = (password, userpassword) => {
+  console.log("validPassword: before %s/%s", password, userpassword);
+  try {
+    var sync = bcrypt.compareSync(password, userpassword);
+    console.log("validPassword: after", sync);
+    return sync;
+  } catch (e) {
+    console.log("validPassword: after", sync);
+    return false;
+  }
+
+  return sync;
 };
 
 const User = mongoose.model("User", userSchema);
