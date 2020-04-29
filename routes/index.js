@@ -1,5 +1,5 @@
 var Product = require("../models/product");
-
+var { Cart } = require("../models/cart");
 var express = require("express");
 var router = express.Router();
 
@@ -21,6 +21,25 @@ router.get("/", async (req, res, next) => {
   } catch (e) {
     console.log(e);
     res.render("shop/index", { title: "Shopping Cart" });
+  }
+});
+
+router.get("/add-to-cart/:id", async (req, res, next) => {
+  var productid = req.params.id;
+  var cart = new Cart(req.session.cart ? req.session.cart : {}); // Sessionにカートがあればそちらを使う。
+  try {
+    var product = await Product.findById(productid);
+    cart.add(product, product.id);
+    req.session.cart = cart; // 作成したcartをsessionに保管
+    console.log(
+      "/add-to-cart:product added: %s: %s",
+      product.id,
+      req.session.cart
+    );
+    res.redirect("/");
+  } catch (e) {
+    console.log(e);
+    return res.redirect("/");
   }
 });
 

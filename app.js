@@ -3,7 +3,7 @@ var express = require("express");
 var expresssession = require("express-session");
 
 // connect-mongoはここ
-var mongostore = require("connect-mongo");
+var mongostore = require("connect-mongo")(expresssession);
 
 var passport = require("passport");
 var LocalStrategy = require("passport-local").Strategy;
@@ -21,6 +21,9 @@ var indexRouter = require("./routes/index");
 var userRouter = require("./routes/user");
 
 var app = express();
+
+// Database
+require("./db/mongoose");
 
 // view engine setup
 // app.engine(".hbs", expresshbs({ defaultLayout: "layout", extname: ".hbs" }));
@@ -50,9 +53,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(passport.initialize());
 app.use(passport.session());
 require("./config/passport");
-
-// Database
-require("./db/mongoose");
 
 // Routing
 app.use((req, res, next) => {
