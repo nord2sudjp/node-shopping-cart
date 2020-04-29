@@ -1,6 +1,10 @@
 var createError = require("http-errors");
 var express = require("express");
 var expresssession = require("express-session");
+
+// connect-mongoはここ
+var mongostore = require("connect-mongo");
+
 var passport = require("passport");
 var LocalStrategy = require("passport-local").Strategy;
 
@@ -34,6 +38,8 @@ app.use(
     secret: "secretkey",
     resave: false,
     saveUninitialized: false,
+    store: new mongostore({ mongooseConnection: mongoose.connection }), // mongooseのinitializeが終わってから
+    cookie: { maxAge: 180 * 60 * 1000 },
   })
 );
 app.use(flash());
@@ -53,6 +59,7 @@ app.use((req, res, next) => {
   // always run whichever route.
   // this is necesary to manage view.
   res.locals.login = req.isAuthenticated();
+  res.locals.session = req.session;
   next();
 });
 app.use("/user", userRouter); // この順番大事。まずはパス付→index→ワイルドカード?
