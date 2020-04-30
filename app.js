@@ -66,8 +66,11 @@ app.use("/user", userRouter); // この順番大事。まずはパス付→index
 app.use("/", indexRouter);
 
 // catch 404 and forward to error handler
+// ここに来るということはパスにマッチしなかった。
 app.use(function (req, res, next) {
-  next(createError(404));
+  var err = new Error("Not Found");
+  err.status = 404;
+  next(err);
 });
 
 // error handler
@@ -79,6 +82,16 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render("error");
+});
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function (err, req, res, next) {
+  res.status(err.status || 500);
+  res.render("error", {
+    message: err.message,
+    error: {},
+  });
 });
 
 module.exports = app;

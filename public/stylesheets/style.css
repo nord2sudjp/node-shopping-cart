@@ -10,3 +10,8 @@ a {
 .top-buffer {
   margin-top: 20px;
 }
+
+.row-0 {
+  margin-left: 0px;
+  color: #00b7ff;
+}
