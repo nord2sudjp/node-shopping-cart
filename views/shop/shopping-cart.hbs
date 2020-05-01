@@ -1,35 +1,31 @@
 {{#if products}}
-<div class="row">
-    <div class="col-sm-6 col-md-6 offset-md-3 offset-sm-3">
-        <ul class="list-group">
-            {{#each products }}
-            <li class="list-group-item  border-0 d-flex align-items-center">
-                <strong class="mr-2">{{this.item.title}}</strong>
-                <span class="badge badge-success mr-2">${{this.price}}</span>
-                <div class="dropdown mr-2">
-                    <button class="btn btn-primary dropdown-toggle" id="dropdownMenuButton" type=" button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span
-                            class="caret"></span></button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Reduce by 1</a>
-                        <a class="dropdown-item" href="#">Remove all</a>
-                    </div>
-                </div>
-                <span class="badge badge-primary badge-pill ml-auto">{{this.qty}}</span>
-            </li>
-            {{/each}}
-        </ul>
+<ul class="list-group">
+    {{#each products }}
+    <div class="row align-items-center my-1">
+        <!-- <li class="list-group-item align-items-center border-0"> -->
+        <div class="col-sm-6 col-md-6">{{this.item.title}}</div>
+        <div class="dropdown col-sm-2 col-md-2 offset-sm-1 offset-md-1">
+            <button class="btn btn-primary dropdown-toggle" id="dropdownMenuButton" type=" button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span
+                    class="caret"></span></button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#">Reduce by 1</a>
+                <a class="dropdown-item" href="#">Remove all</a>
+            </div>
+        </div>
+        <div class="badge badge-success col-sm-1 col-md-1">${{this.price}}</div>
+        <div class="badge badge-primary badge-pill col-sm-1 col-md-1">{{this.qty}}</div>
+        <!-- </li> -->
     </div>
-</div>
+    {{/each}}
+</ul>
 
-<div class="row">
-    <div class="col-sm-6 col-md-6 offset-md-3 offset-sm-3">
+<hr>
+<div class="row align-items-center ">
+    <div class="col-sm-2 col-md-2 offset-md-7 offset-sm-7">
         <strong>Total: $ {{ totalPrice }}</strong>
     </div>
-</div>
-<hr>
-<div class="row">
-    <div class="col-sm-6 col-md-6 offset-md-3 offset-sm-3">
+    <div class="col-sm-2 col-md-2">
         <a href="/checkout" type="button" class="btn btn-success">Checkout</a>
     </div>
 </div>

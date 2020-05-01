@@ -3,6 +3,8 @@ var { Cart } = require("../models/cart");
 var express = require("express");
 var router = express.Router();
 
+var Order = require("../models/order");
+
 /* GET home page. */
 router.get("/", async (req, res, next) => {
   try {
@@ -87,7 +89,7 @@ router.post("/checkout", async (req, res, next) => {
     );
     console.log("[DEBUG] POST /checkout: creating stripe charge ", token);
 
-    var charge = stripe.charges.create({
+    var charge = await stripe.charges.create({
       amount: cart.totalPrice * 100,
       currency: "usd",
       source: token,
@@ -98,9 +100,23 @@ router.post("/checkout", async (req, res, next) => {
     req.flash("error", err.messsage);
     return res.redirect("/checkout");
   }
-  req.flash("success", "Successfully bought product!");
-  req.cart = null;
-  return res.redirect("/");
+
+  try {
+    console.log(charge);
+    var order = new Order({
+      user: req.user, // Passportがuserを保管する
+      cart,
+      address: req.body.address,
+      name: req.body.name,
+      paymentId: charge.id,
+    });
+    await order.save();
+    req.flash("success", "Successfully bought product!");
+    req.cart = null;
+    return res.redirect("/");
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 module.exports = router;
