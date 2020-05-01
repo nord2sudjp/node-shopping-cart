@@ -12,9 +12,12 @@ router.get("/", async (req, res, next) => {
     for (var i = 0; i < products.length; i += chunkSize) {
       productChunks.push(products.slice(i, i + chunkSize));
     }
+    var successMsg = req.flash("success")[0];
+
     res.render("shop/index", {
       title: "Express",
       products: productChunks,
+      successMsg,
     });
 
     // console.log(products);
@@ -60,9 +63,44 @@ router.get("/checkout", (req, res, next) => {
     return res.redirect("/shopping-cart");
   }
   var cart = new Cart(req.session.cart);
+  var errMsg = req.flash("error")[0];
   res.render("shop/checkout", {
     total: cart.totalPrice,
+    errMsg,
+    noError: !errMsg,
   });
+});
+
+router.post("/checkout", async (req, res, next) => {
+  var token = req.body.stripeToken;
+
+  console.log("[DEBUG] POST /checkout: ", token);
+  if (!req.session.cart) {
+    //return res.render("shop/shopping-cart", { products: null });
+    return res.redirect("/shopping-cart");
+  }
+  var cart = new Cart(req.session.cart);
+
+  try {
+    var stripe = require("stripe")(
+      "sk_test_W1VX70xVPncNhD59jZhumIkp00vaIcLdhf"
+    );
+    console.log("[DEBUG] POST /checkout: creating stripe charge ", token);
+
+    var charge = stripe.charges.create({
+      amount: cart.totalPrice * 100,
+      currency: "usd",
+      source: token,
+      description: "Test charge",
+    });
+  } catch (e) {
+    console.log(e);
+    req.flash("error", err.messsage);
+    return res.redirect("/checkout");
+  }
+  req.flash("success", "Successfully bought product!");
+  req.cart = null;
+  return res.redirect("/");
 });
 
 module.exports = router;

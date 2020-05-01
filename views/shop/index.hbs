@@ -1,5 +1,13 @@
-<p></p>
+<div class="row">
 
+    <div class="col-lg-6 offset-lg-3 col-sm-6 offset-sm-3 col-md-6 offset-md-3">
+        {{#if successMsg}}
+        <div id="success" class="alert alert-success mx-auto">
+            {{successMsg}}
+        </div>
+        {{/if}}
+    </div>
+</div>
 {{#each products}}
 <div class="row">
 

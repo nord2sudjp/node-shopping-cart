@@ -8,26 +8,28 @@
         <div>
             <h1>Checkout</h1>
             <h4>Your Total: ${{total}}</h4>
-            {{#if noError}}
+            <div id="card-errors"></div>
+            {{#if errMsg}}
             <div id="charge-error" class="alert alert-danger">
                 {{errMsg}}
             </div>
             {{/if}}
             <div class="cell example example1" id="example-1">
-                <form class="py-2">
+                <form id="payment-form" method="post" action="/checkout" class="py-2">
                     <fieldset>
                         <div class="row">
-                            <div id="example1-card"></div>
+                            <div id="card-element"></div>
                         </div>
                     </fieldset>
-                    <button type="submit" data-tid="elements_examples.form.pay_button"">
+                    <button type="submit" data-tid="elements_examples.form.pay_button">
                         Pay ${{total}}
                     </button>
+                    <!-- <input type="hidden" name="stripeToken" class="token"> -->
                 </form>
             </div>
         </div>
     </div>
 </div>
 <!-- Scripts for each example: -->
-<script src=" js/example1.js" data-rel-js>
+<script src=" js/client.js" data-rel-js>
 </script>
