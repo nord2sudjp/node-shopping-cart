@@ -1,4 +1,5 @@
 var Cart = function (oldCart) {
+  console.log("Cart:construct", oldCart);
   this.items = oldCart.items || {};
   this.totalQty = oldCart.totalQty || 0;
   this.totalPrice = oldCart.totalPrice || 0;

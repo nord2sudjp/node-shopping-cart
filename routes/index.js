@@ -103,7 +103,7 @@ router.post("/checkout", authwithredirect, async (req, res, next) => {
   }
 
   try {
-    console.log(charge);
+    console.log("/checkout", charge);
     var order = new Order({
       user: req.user, // Passportがuserを保管する
       cart,
@@ -112,7 +112,11 @@ router.post("/checkout", authwithredirect, async (req, res, next) => {
       paymentId: charge.id,
     });
     await order.save();
-    req.flash("success", "Successfully bought product!");
+    req.flash(
+      "success",
+      "Successfully bought product! Order Number : %s",
+      order._id
+    );
     req.session.cart = null;
     return res.redirect("/");
   } catch (e) {

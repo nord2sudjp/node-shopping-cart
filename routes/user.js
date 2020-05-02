@@ -10,13 +10,32 @@ router.use(csrfProtection); // All of route must be protected by this protection
 
 const { auth, notauth } = require("../middleware/auth");
 
+const { Cart } = require("../models/cart");
+const Order = require("../models/order");
+
 router.get("/logout", auth, (req, res, next) => {
   req.logout();
   res.redirect("/");
 });
 
-router.get("/profile", auth, (req, res, next) => {
-  res.render("user/profile");
+router.get("/profile", auth, async (req, res, next) => {
+  try {
+    var orders = await Order.find({ user: req.user }); // Passportにより保管されている
+
+    orders.forEach((order) => {
+      console.log("/profile-order received ", order.cart);
+      var cart = new Cart(order.cart);
+      console.log("/profile-order xxxxx", cart);
+      order.items = cart.generateArray();
+    });
+    console.log("/profile-order render start");
+    return res.render("user/profile", { orders });
+  } catch (e) {
+    console.log(e);
+    return res.write("Error");
+  }
+
+  //res.render("user/profile");
 });
 
 router.use("/", notauth, (req, res, next) => {
