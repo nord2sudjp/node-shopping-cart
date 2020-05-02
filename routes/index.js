@@ -4,6 +4,7 @@ var express = require("express");
 var router = express.Router();
 
 var Order = require("../models/order");
+var { authwithredirect } = require("../middleware/auth");
 
 /* GET home page. */
 router.get("/", async (req, res, next) => {
@@ -59,7 +60,7 @@ router.get("/shopping-cart", (req, res, next) => {
   });
 });
 
-router.get("/checkout", (req, res, next) => {
+router.get("/checkout", authwithredirect, (req, res, next) => {
   if (!req.session.cart) {
     //return res.render("shop/shopping-cart", { products: null });
     return res.redirect("/shopping-cart");
@@ -73,7 +74,7 @@ router.get("/checkout", (req, res, next) => {
   });
 });
 
-router.post("/checkout", async (req, res, next) => {
+router.post("/checkout", authwithredirect, async (req, res, next) => {
   var token = req.body.stripeToken;
 
   console.log("[DEBUG] POST /checkout: ", token);
@@ -112,7 +113,7 @@ router.post("/checkout", async (req, res, next) => {
     });
     await order.save();
     req.flash("success", "Successfully bought product!");
-    req.cart = null;
+    req.session.cart = null;
     return res.redirect("/");
   } catch (e) {
     console.log(e);

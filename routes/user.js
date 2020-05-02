@@ -78,6 +78,38 @@ router.get("/signin", (req, res, next) => {
   res.render("user/signin", { csrfToken: req.csrfToken(), messages });
 });
 
+authPassport = async (req, res) => {
+  await passport.authenticate("local.signin", (err, user, info) => {
+    console.log("custome callback");
+    if (err) {
+      console.log("passport.authenticate:local.signin:", err, info);
+      req.flash("error", info.message);
+      return res.redirect("/user/signin");
+    }
+    if (!user) {
+      console.log("passport.authenticate:local.signin:", info);
+      req.flash("error", info.message);
+      return res.redirect("/user/signin");
+    }
+    req.login(user, (err) => {
+      if (err) {
+        console.log("passport.authenticate:local.signin:", err);
+        req.flash("error", err.message);
+        return res.redirect("/user/signin");
+      }
+      if (req.session.oldUrl) {
+        var oldurl = req.session.oldUrl;
+        console.log("/signin:successRedirect to ", oldurl);
+        req.session.oldUrl = null;
+        return res.redirect(oldurl);
+      } else {
+        console.log("/signin:successRedirect - profile");
+        return res.redirect("/user/profile");
+      }
+    });
+  })(req, res);
+};
+
 router.post(
   "/signin",
   [
@@ -93,11 +125,39 @@ router.post(
       return res.redirect("/user/signin");
     }
 
-    await passport.authenticate("local.signin", {
-      successRedirect: "/user/profile",
-      failureRedirect: "/user/signin",
-      failureFlash: true,
+    await authPassport(req, res);
+    return;
+    /*
+    await passport.authenticate("local.signin", (err, user, info) => {
+      console.log("custome callback");
+      if (err) {
+        console.log("passport.authenticate:local.signin:", err, info);
+        req.flash("error", info.message);
+        return res.redirect("/user/signin");
+      }
+      if (!user) {
+        console.log("passport.authenticate:local.signin:", info);
+        req.flash("error", info.message);
+        return res.redirect("/user/signin");
+      }
+      req.login(user, (err) => {
+        if (err) {
+          console.log("passport.authenticate:local.signin:", err);
+          req.flash("error", err.message);
+          return res.redirect("/user/signin");
+        }
+        if (req.session.oldUrl) {
+          var oldurl = req.session.oldUrl;
+          console.log("/signin:successRedirect to ", oldurl);
+          req.session.oldUrl = null;
+          return res.redirect(oldurl);
+        } else {
+          console.log("/signin:successRedirect - profile");
+          return res.redirect("/user/profile");
+        }
+      });
     })(req, res);
+    */
   }
 );
 
