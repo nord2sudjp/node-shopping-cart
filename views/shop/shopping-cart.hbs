@@ -9,8 +9,8 @@
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span
                     class="caret"></span></button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#">Reduce by 1</a>
-                <a class="dropdown-item" href="#">Remove all</a>
+                <a class="dropdown-item" href="/reduceone-from-cart/{{this.item._id}}">Reduce by 1</a>
+                <a class="dropdown-item" href="/remove/{{this.item._id}}">Remove all</a>
             </div>
         </div>
         <div class="badge badge-success col-sm-1 col-md-1">${{this.price}}</div>

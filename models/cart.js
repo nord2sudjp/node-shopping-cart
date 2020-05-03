@@ -1,5 +1,5 @@
 var Cart = function (oldCart) {
-  console.log("Cart:construct", oldCart);
+  // console.log("Cart:construct", oldCart);
   this.items = oldCart.items || {};
   this.totalQty = oldCart.totalQty || 0;
   this.totalPrice = oldCart.totalPrice || 0;
@@ -14,6 +14,23 @@ var Cart = function (oldCart) {
     storedItem.price = storedItem.item.price * storedItem.qty;
     this.totalQty++;
     this.totalPrice += storedItem.item.price;
+  };
+
+  this.reduceByOne = (id) => {
+    this.items[id].qty--;
+    this.items[id].price -= this.items[id].item.price;
+    this.totalQty--;
+    this.totalPrice -= this.items[id].item.price;
+
+    if (this.items[id].qty <= 0) {
+      delete this.items[id];
+    }
+  };
+
+  this.removeItem = (id) => {
+    this.totalQty -= this.items[id].qty;
+    this.totalPrice -= this.items[id].price;
+    delete this.items[id];
   };
 
   this.generateArray = () => {
